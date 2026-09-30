@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Calculate your current course grade, remaining points, and the final exam score needed to pass." />
+    <title>Course Grade Calculator</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2313293d'/%3E%3Cpath d='M15 18h34v7H15zm0 14h21v7H15zm0 14h13v7H15z' fill='%235ee0c2'/%3E%3Cpath d='m39 45 5 5 9-12' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">COURSE TOOL</p>
+        <h1>Grade calculator</h1>
+      </div>
+      <button class="text-button" id="resetButton" type="button">Clear all grades</button>
+    </header>
+
+    <main>
+      <section class="summary" aria-labelledby="summary-title">
+        <div class="summary-heading">
+          <div>
+            <p class="eyebrow">YOUR PROGRESS</p>
+            <h2 id="summary-title">Where you stand</h2>
+          </div>
+          <span class="save-status" id="saveStatus">Saved on this device</span>
+        </div>
+
+        <div class="metrics" aria-live="polite">
+          <article class="metric metric-primary">
+            <span>Current grade</span>
+            <strong id="currentGrade">—</strong>
+            <small>Based only on graded work</small>
+          </article>
+          <article class="metric">
+            <span>Course points earned</span>
+            <strong id="earnedPoints">0.00</strong>
+            <small>out of 100 course points</small>
+          </article>
+          <article class="metric">
+            <span>Points offered so far</span>
+            <strong id="offeredPoints">0.00</strong>
+            <small><span id="remainingPoints">100.00</span> points remain</small>
+          </article>
+        </div>
+
+        <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+        <div class="summary-actions">
+          <p id="gradeSummary">Enter a grade below to begin.</p>
+          <button class="primary-button" id="finalButton" type="button">Grade needed on final</button>
+        </div>
+      </section>
+
+      <section class="requirements" aria-labelledby="requirements-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PASSING REQUIREMENTS</p>
+            <h2 id="requirements-title">Requirements check</h2>
+          </div>
+          <p>A passing course grade is 70% or higher.</p>
+        </div>
+        <div class="requirement-grid">
+          <article class="requirement" id="labRequirement">
+            <span class="status-icon" aria-hidden="true">○</span>
+            <div><strong>Lab average of at least 50%</strong><p id="labRequirementText">No lab grades entered yet.</p></div>
+          </article>
+          <article class="requirement" id="projectRequirement">
+            <span class="status-icon" aria-hidden="true">○</span>
+            <div><strong>At least 50% in every PA</strong><p id="projectRequirementText">No project grades entered yet.</p></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="gradebook" aria-labelledby="gradebook-title">
+        <div class="section-heading gradebook-heading">
+          <div>
+            <p class="eyebrow">YOUR GRADES</p>
+            <h2 id="gradebook-title">Enter points earned</h2>
+          </div>
+          <p>Leave future or ungraded work blank. A score of 0 counts as graded.</p>
+        </div>
+        <div id="categoryList" class="category-list"></div>
+      </section>
+
+      <aside class="rules" aria-labelledby="rules-title">
+        <h2 id="rules-title">How the calculator handles bonus points</h2>
+        <ul>
+          <li>Exams, labs, and PAs may include points above their maximum, but each category is capped at its course weight.</li>
+          <li>PA bonus points are pooled to cover points missing from the 50% minimum on another PA. PA0 needs 12.5 of 25 points; PA1–PA3 need 50 of 100.</li>
+          <li>Grades stay in this browser only. Nothing is submitted or sent to your professor.</li>
+        </ul>
+      </aside>
+    </main>
+
+    <dialog id="finalDialog" aria-labelledby="final-title">
+      <form method="dialog" class="dialog-card">
+        <div class="dialog-header">
+          <div><p class="eyebrow">FINAL EXAM</p><h2 id="final-title">What do you need to pass?</h2></div>
+          <button class="close-button" value="close" aria-label="Close">×</button>
+        </div>
+        <div id="finalResult" class="final-result"></div>
+        <p class="dialog-note" id="finalNote"></p>
+        <button class="primary-button full-button" value="close">Done</button>
+      </form>
+    </dialog>
+
+    <template id="categoryTemplate">
+      <details class="category" open>
+        <summary>
+          <div class="category-title"><span class="category-number"></span><div><h3></h3><p></p></div></div>
+          <div class="category-score"><strong>—</strong><span>of category</span></div>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div class="category-body">
+          <div class="input-header"><span>Item</span><span>Points earned</span><span>Points possible</span></div>
+          <div class="input-list"></div>
+          <div class="category-footer"><span class="category-progress"></span><span class="category-bonus"></span></div>
+        </div>
+      </details>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
