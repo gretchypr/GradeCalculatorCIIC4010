@@ -18,36 +18,39 @@
     </header>
 
     <main>
+      <section class="gradebook" aria-labelledby="gradebook-title">
+        <div class="section-heading gradebook-heading">
+          <div>
+            <p class="eyebrow">YOUR GRADES</p>
+            <h2 id="gradebook-title">Enter points earned</h2>
+          </div>
+          <p>Leave future or ungraded work blank. A score of 0 counts as graded.</p>
+        </div>
+        <div id="categoryTabs" class="category-tabs" role="tablist" aria-label="Grade categories"></div>
+        <div id="categoryList" class="category-list"></div>
+      </section>
+
       <section class="summary" aria-labelledby="summary-title">
         <div class="summary-heading">
           <div>
             <p class="eyebrow">YOUR PROGRESS</p>
-            <h2 id="summary-title">Where you stand</h2>
+            <h2 id="summary-title">Your course at a glance</h2>
           </div>
           <span class="save-status" id="saveStatus">Saved on this device</span>
         </div>
 
-        <div class="metrics" aria-live="polite">
-          <article class="metric metric-primary">
-            <span>Current grade</span>
-            <strong id="currentGrade">—</strong>
-            <small>Based only on graded work</small>
-          </article>
-          <article class="metric">
-            <span>Course points earned</span>
-            <strong id="earnedPoints">0.00</strong>
-            <small>out of 100 course points</small>
-          </article>
-          <article class="metric">
-            <span>Points offered so far</span>
-            <strong id="offeredPoints">0.00</strong>
-            <small><span id="remainingPoints">100.00</span> points remain</small>
-          </article>
+        <div class="table-scroll">
+          <table class="progress-table" aria-label="Overall course progress">
+            <thead><tr><th scope="col">Points offered</th><th scope="col">Points left to earn</th><th scope="col">Points accumulated</th><th scope="col">Current grade</th><th scope="col">Points needed to pass</th></tr></thead>
+            <tbody><tr><td id="offeredPoints">0.00</td><td id="remainingPoints">100.00</td><td id="earnedPoints">0.00</td><td id="currentGrade">&mdash;</td><td id="neededPoints">70.00</td></tr></tbody>
+          </table>
         </div>
+        <p class="summary-explanation">Course points are out of 100. Current grade = points accumulated &divide; points offered. Passing requires 70 course points.</p>
+        <details class="breakdown"><summary>See totals by category</summary><div class="table-scroll"><table class="breakdown-table"><caption>How each category contributes to your course grade</caption><thead><tr><th scope="col">Category</th><th scope="col">Grades entered</th><th scope="col">Raw points earned</th><th scope="col">Raw points possible so far</th><th scope="col">Course points earned</th><th scope="col">Course weight</th></tr></thead><tbody id="breakdownBody"></tbody></table></div></details>
 
         <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
         <div class="summary-actions">
-          <p id="gradeSummary">Enter a grade below to begin.</p>
+          <p id="gradeSummary">Enter a grade above to begin.</p>
           <button class="primary-button" id="finalButton" type="button">Grade needed on final</button>
         </div>
       </section>
@@ -70,17 +73,6 @@
             <div><strong>At least 50% in every PA</strong><p id="projectRequirementText">No project grades entered yet.</p></div>
           </article>
         </div>
-      </section>
-
-      <section class="gradebook" aria-labelledby="gradebook-title">
-        <div class="section-heading gradebook-heading">
-          <div>
-            <p class="eyebrow">YOUR GRADES</p>
-            <h2 id="gradebook-title">Enter points earned</h2>
-          </div>
-          <p>Leave future or ungraded work blank. A score of 0 counts as graded.</p>
-        </div>
-        <div id="categoryList" class="category-list"></div>
       </section>
 
       <aside class="rules" aria-labelledby="rules-title">
@@ -106,18 +98,17 @@
     </dialog>
 
     <template id="categoryTemplate">
-      <details class="category" open>
-        <summary>
+      <section class="category" role="tabpanel">
+        <div class="category-heading">
           <div class="category-title"><span class="category-number"></span><div><h3></h3><p></p></div></div>
-          <div class="category-score"><strong>—</strong><span>of category</span></div>
-          <span class="chevron" aria-hidden="true">⌄</span>
-        </summary>
+          <div class="category-score"><strong>&mdash;</strong><span>of graded work</span></div>
+        </div>
         <div class="category-body">
           <div class="input-header"><span>Item</span><span>Points earned</span><span>Points possible</span></div>
           <div class="input-list"></div>
           <div class="category-footer"><span class="category-progress"></span><span class="category-bonus"></span></div>
         </div>
-      </details>
+      </section>
     </template>
 
     <script src="app.js"></script>

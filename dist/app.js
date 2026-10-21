@@ -16,7 +16,8 @@ function loadState() {
   catch { return {}; }
 }
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch { document.querySelector("#saveStatus").textContent = "Storage unavailable; keep this page open"; return; }
   const status = document.querySelector("#saveStatus");
   status.textContent = "Saved on this device";
 }
@@ -45,7 +46,41 @@ function renderCategories() {
       if (saved !== undefined) row.querySelector(".points-input").value = saved;
       list.append(row);
     });
+    node.id = `panel-${category.id}`;
+    node.setAttribute("aria-labelledby", `tab-${category.id}`);
+    node.hidden = categoryIndex !== 0;
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.id = `tab-${category.id}`;
+    tab.className = "category-tab";
+    tab.dataset.categoryTab = category.id;
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-controls", node.id);
+    tab.setAttribute("aria-selected", String(categoryIndex === 0));
+    tab.tabIndex = categoryIndex === 0 ? 0 : -1;
+    const shortTitle = {exams:"Exams", projects:"Projects", labs:"Labs", quizzes:"Quizzes", attendance:"Attendance", final:"Final exam"}[category.id];
+    tab.innerHTML = `<span>${shortTitle}</span><small>${category.weight}% &middot; <span class="tab-count">0/${category.items.length}</span></small>`;
+    tab.addEventListener("click", () => selectCategory(category.id));
+    tab.addEventListener("keydown", event => {
+      const keys = ["ArrowRight", "ArrowLeft", "Home", "End"];
+      if (!keys.includes(event.key)) return;
+      event.preventDefault();
+      const next = event.key === "Home" ? 0 : event.key === "End" ? CATEGORIES.length-1 : (categoryIndex + (event.key === "ArrowRight" ? 1 : -1) + CATEGORIES.length) % CATEGORIES.length;
+      selectCategory(CATEGORIES[next].id, true);
+    });
+    document.querySelector("#categoryTabs").append(tab);
     categoryList.append(node);
+  });
+}
+
+function selectCategory(id, focus = false) {
+  CATEGORIES.forEach(category => {
+    const selected = category.id === id;
+    const tab = document.querySelector(`#tab-${category.id}`);
+    tab.setAttribute("aria-selected", String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    document.querySelector(`#panel-${category.id}`).hidden = !selected;
+    if (selected && focus) tab.focus();
   });
 }
 
@@ -72,8 +107,13 @@ function categoryStats(category) {
 
 function update() {
   let offered = 0, earned = 0;
+  document.querySelector("#breakdownBody").replaceChildren();
   CATEGORIES.forEach(category => {
     const stats = categoryStats(category);
+    document.querySelector(`#tab-${category.id} .tab-count`).textContent = `${stats.gradedCount}/${category.items.length}`;
+    const row = document.createElement("tr");
+    row.innerHTML = `<th scope="row">${category.title}</th><td>${stats.gradedCount}/${category.items.length}</td><td>${fmt(stats.earned)}</td><td>${fmt(stats.gradedMax)}</td><td>${fmt(stats.earnedCoursePoints)}</td><td>${category.weight}</td>`;
+    document.querySelector("#breakdownBody").append(row);
     offered += stats.offeredCoursePoints;
     earned += stats.earnedCoursePoints;
     const card = document.querySelector(`[data-category="${category.id}"]`);
@@ -85,9 +125,10 @@ function update() {
   document.querySelector("#currentGrade").textContent = current === null ? "—" : `${fmt(current,1)}%`;
   document.querySelector("#earnedPoints").textContent = fmt(earned);
   document.querySelector("#offeredPoints").textContent = fmt(offered);
+  document.querySelector("#neededPoints").textContent = fmt(Math.max(0, PASSING_GRADE-earned));
   document.querySelector("#remainingPoints").textContent = fmt(100-offered);
   document.querySelector("#progressBar").style.width = `${Math.min(100,offered)}%`;
-  document.querySelector("#gradeSummary").textContent = current === null ? "Enter a grade below to begin." : `${fmt(earned)} of ${fmt(offered)} available course points earned.`;
+  document.querySelector("#gradeSummary").textContent = current === null ? "Enter a grade above to begin." : `${fmt(earned)} of ${fmt(offered)} available course points earned.`;
   updateRequirements();
   saveState();
 }
@@ -132,7 +173,7 @@ function showFinalCalculation() {
   const needed = (PASSING_GRADE - nonFinalEarned) / finalCategory.weight * 100;
   const result = document.querySelector("#finalResult");
   const note = document.querySelector("#finalNote");
-  const otherPending = CATEGORIES.filter(c=>!["final","attendance"].includes(c.id)).some(c=>categoryStats(c).gradedCount<c.items.length);
+  const otherPending = CATEGORIES.filter(c=>!["final"].includes(c.id)).some(c=>categoryStats(c).gradedCount<c.items.length);
   if (needed <= 0) result.innerHTML = `<strong>0%</strong><span>You already have enough course points for 70%.</span>`;
   else if (needed > 100) result.innerHTML = `<strong>More than 100%</strong><span>You currently need ${fmt(needed,1)}% on the final to reach 70%.</span>`;
   else result.innerHTML = `<strong>${fmt(needed,1)}%</strong><span>Minimum final exam grade to reach 70% overall.</span>`;

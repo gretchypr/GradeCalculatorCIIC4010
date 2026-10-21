@@ -113,3 +113,52 @@ dialog::backdrop { background: rgba(10, 25, 36, .66); backdrop-filter: blur(3px)
   .category-bonus { text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+/* Tabbed grade entry and spreadsheet-inspired course totals. */
+.gradebook { margin-top: 0; }
+.category-tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 24px; }
+.category-tab { --category-color: #876600; --category-soft: #fff7d5; border: 1px solid var(--line); border-top: 4px solid var(--category-color); border-radius: 10px; padding: 12px 8px; background: white; color: var(--ink); text-align: left; }
+.category-tab[data-category-tab="projects"] { --category-color: #414ac7; --category-soft: #eef0ff; }
+.category-tab[data-category-tab="labs"] { --category-color: #477b22; --category-soft: #eff7e8; }
+.category-tab[data-category-tab="quizzes"] { --category-color: #28647a; --category-soft: #eaf5f8; }
+.category-tab[data-category-tab="attendance"] { --category-color: #963f72; --category-soft: #fbeef5; }
+.category-tab[data-category-tab="final"] { --category-color: #6637a3; --category-soft: #f3edfc; }
+.category-tab[aria-selected="true"] { background: var(--category-soft); border-color: var(--category-color); box-shadow: 0 0 0 1px var(--category-color); }
+.category-tab:hover { background: var(--category-soft); }
+.category-tab > span { display: block; font-weight: 800; }
+.category-tab small { display: block; margin-top: 4px; color: var(--muted); font-size: .78rem; }
+button:focus-visible, summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; }
+.category[hidden] { display: none; }
+.category-heading { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 18px 20px; background: #f9fbfc; border-bottom: 1px solid var(--line); }
+.category-list { margin-top: 16px; }
+.category-number { display: none; }
+.summary { margin-top: 22px; }
+.table-scroll { overflow-x: auto; margin-top: 22px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.progress-table { min-width: 630px; table-layout: fixed; }
+.progress-table th { padding: 14px 12px; background: #edf2f7; font-size: .85rem; text-align: left; vertical-align: top; border: 1px solid var(--line); }
+.progress-table th:nth-child(1) { background: #fff2d4; }
+.progress-table th:nth-child(2) { background: #efe9fa; }
+.progress-table th:nth-child(3) { background: #e6f5f0; }
+.progress-table th:nth-child(4) { background: #e5edf9; }
+.progress-table th:nth-child(5) { background: #fff6d9; }
+.progress-table td { padding: 16px 12px; border: 1px solid var(--line); font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 800; }
+#currentGrade { color: var(--teal-dark); }
+.summary-explanation { color: var(--muted); font-size: .85rem; margin: 12px 0 20px; }
+.breakdown > summary { cursor: pointer; font-weight: 700; color: var(--teal-dark); }
+.breakdown .table-scroll { margin-top: 12px; }
+.breakdown-table { min-width: 690px; font-size: .85rem; }
+.breakdown-table caption { text-align: left; color: var(--muted); padding-bottom: 10px; }
+.breakdown-table th, .breakdown-table td { border: 1px solid var(--line); padding: 10px; text-align: right; }
+.breakdown-table th:first-child { text-align: left; }
+.breakdown-table thead { background: #f2f6f8; }
+@media (max-width: 760px) {
+  .category-tabs { grid-template-columns: repeat(3, 1fr); }
+  .category-tab { padding: 10px 8px; }
+  .category-heading { padding: 15px; }
+  .category-score { padding-left: 0; flex-shrink: 0; }
+  .input-header { display: grid; grid-template-columns: 1fr 100px 100px; font-size: .65rem; gap: 8px; }
+  .grade-row { grid-template-columns: 1fr 100px 100px; }
+  .grade-row label { grid-column: auto; font-size: .9rem; }
+  .category-body { padding-inline: 10px; }
+  .points-input, .max-input { padding-inline: 8px; }
+}
